@@ -59,7 +59,7 @@ type IntegrationConfig struct{
 
 
 
-func loadConfig() (*Config, error){
+func LoadConfig() (*Config, error){
 	logger := zerolog.New(zerolog.ConsoleWriter{Out : os.Stderr}).With().Timestamp().Logger()
 
 	k := koanf.New(".")
