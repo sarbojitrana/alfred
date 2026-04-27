@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/sarbojitrana/go-boilerplate/internal/service"
-	"github.com/sarbojitrana/go-boilerplate/internal/server"
+	"github.com/sarbojitrana/go-alfred/internal/service"
+	"github.com/sarbojitrana/go-alfred/internal/server"
 )
 
 

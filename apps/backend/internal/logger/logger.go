@@ -12,7 +12,7 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/pkgerrors"
-	"github.com/sarbojitrana/go-boilerplate/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/config"
 
 
 )

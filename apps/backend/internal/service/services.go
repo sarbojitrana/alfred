@@ -1,9 +1,9 @@
 package service
 
 import(
-	"github.com/sarbojitrana/go-boilerplate/internal/lib/job"
-	"github.com/sarbojitrana/go-boilerplate/internal/server"
-	"github.com/sarbojitrana/go-boilerplate/internal/repository"
+	"github.com/sarbojitrana/go-alfred/internal/lib/job"
+	"github.com/sarbojitrana/go-alfred/internal/server"
+	"github.com/sarbojitrana/go-alfred/internal/repository"
 )
 
 type Services struct{

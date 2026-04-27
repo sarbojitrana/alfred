@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/sarbojitrana/go-boilerplate/internal/errs"
+	"github.com/sarbojitrana/go-alfred/internal/errs"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"

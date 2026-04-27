@@ -8,8 +8,8 @@ import(
 
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog"
-	"github.com/sarbojitrana/go-boilerplate/internal/config"
-	"github.com/sarbojitrana/go-boilerplate/internal/lib/email"
+	"github.com/sarbojitrana/go-alfred/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/lib/email"
 )
 
 

@@ -8,14 +8,14 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/sarbojitrana/go-boilerplate/internal/config"
-	"github.com/sarbojitrana/go-boilerplate/internal/database"
-	"github.com/sarbojitrana/go-boilerplate/internal/handler"
-	"github.com/sarbojitrana/go-boilerplate/internal/logger"
-	"github.com/sarbojitrana/go-boilerplate/internal/repository"
-	"github.com/sarbojitrana/go-boilerplate/internal/router"
-	"github.com/sarbojitrana/go-boilerplate/internal/server"
-	"github.com/sarbojitrana/go-boilerplate/internal/service"
+	"github.com/sarbojitrana/go-alfred/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/database"
+	"github.com/sarbojitrana/go-alfred/internal/handler"
+	"github.com/sarbojitrana/go-alfred/internal/logger"
+	"github.com/sarbojitrana/go-alfred/internal/repository"
+	"github.com/sarbojitrana/go-alfred/internal/router"
+	"github.com/sarbojitrana/go-alfred/internal/server"
+	"github.com/sarbojitrana/go-alfred/internal/service"
 )
 
 

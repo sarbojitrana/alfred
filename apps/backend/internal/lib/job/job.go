@@ -5,7 +5,7 @@ package job
 import(
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog"
-	"github.com/sarbojitrana/go-boilerplate/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/config"
 )
 
 type JobService struct{					// background task queue

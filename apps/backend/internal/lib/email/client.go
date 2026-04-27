@@ -6,7 +6,7 @@ import (
     "github.com/rs/zerolog"
 
     "github.com/resend/resend-go/v2"
-	"github.com/sarbojitrana/go-boilerplate/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/config"
 	"fmt"
 	"html/template"
 	"bytes"
@@ -45,7 +45,7 @@ func (c *Client) SendEmail(to, subject string, templateName Template, data map[s
 
 
 	params := &resend.SendEmailRequest{
-		From:		fmt.Sprintf("%s <%s>", "Boilerplate", "onboarding@resend.dev"),
+		From:		fmt.Sprintf("%s <%s>", "Alfred", "onboarding@resend.dev"),
 		To:			[]string{to},
 		Subject:	subject,
 		Html:		body.String(),

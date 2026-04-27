@@ -1,6 +1,6 @@
 package middleware
 
-import "github.com/sarbojitrana/go-boilerplate/internal/server"
+import "github.com/sarbojitrana/go-alfred/internal/server"
 
 
 

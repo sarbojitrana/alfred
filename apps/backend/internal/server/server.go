@@ -12,10 +12,10 @@ import (
 	"github.com/newrelic/go-agent/v3/integrations/nrredis-v9"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
-	"github.com/sarbojitrana/go-boilerplate/internal/config"
-	"github.com/sarbojitrana/go-boilerplate/internal/database"
-	"github.com/sarbojitrana/go-boilerplate/internal/lib/job"
-	loggerPkg "github.com/sarbojitrana/go-boilerplate/internal/logger"
+	"github.com/sarbojitrana/go-alfred/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/database"
+	"github.com/sarbojitrana/go-alfred/internal/lib/job"
+	loggerPkg "github.com/sarbojitrana/go-alfred/internal/logger"
 )
 
 

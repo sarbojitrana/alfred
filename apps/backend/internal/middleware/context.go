@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/rs/zerolog"
-	"github.com/sarbojitrana/go-boilerplate/internal/logger"
-	"github.com/sarbojitrana/go-boilerplate/internal/server"
+	"github.com/sarbojitrana/go-alfred/internal/logger"
+	"github.com/sarbojitrana/go-alfred/internal/server"
 )
 
 

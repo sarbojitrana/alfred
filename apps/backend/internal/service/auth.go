@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/sarbojitrana/go-boilerplate/internal/server"
+	"github.com/sarbojitrana/go-alfred/internal/server"
 
 	"github.com/clerk/clerk-sdk-go/v2"
 )

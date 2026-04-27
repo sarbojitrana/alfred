@@ -6,10 +6,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
-	"github.com/sarbojitrana/go-boilerplate/internal/handler"
-	"github.com/sarbojitrana/go-boilerplate/internal/middleware"
-	"github.com/sarbojitrana/go-boilerplate/internal/server"
-	"github.com/sarbojitrana/go-boilerplate/internal/service"
+	"github.com/sarbojitrana/go-alfred/internal/handler"
+	"github.com/sarbojitrana/go-alfred/internal/middleware"
+	"github.com/sarbojitrana/go-alfred/internal/server"
+	"github.com/sarbojitrana/go-alfred/internal/service"
 	"golang.org/x/time/rate"
 )
 

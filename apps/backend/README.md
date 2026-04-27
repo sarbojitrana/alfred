@@ -1,1 +1,1 @@
-# Go Boilerplate Backend
+# Go Alfred Backend
