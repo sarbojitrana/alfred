@@ -19,9 +19,9 @@ tasks:
     internal: true
 
   run:
-    desc: run the cmd/go-alfred application
+    desc: run the ./cmd/alfred application
     cmds:
-    - go run ./cmd/go-alfred
+    - go run ./cmd/alfred
 
   migrations:new:
     desc: create a new database migration
