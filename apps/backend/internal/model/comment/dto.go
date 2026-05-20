@@ -8,13 +8,13 @@ import (
 
 
 //-------------------------------------------------------------------------------------------
-type AddCreatePayload struct{
+type AddCommentPayload struct{
 	TodoId 			uuid.UUID			`param:"id" validate:"required,uuid"`
 	Content			string				`json:"content" validate:"required,min=1,max=1000"`
 }
 
 
-func (p *AddCreatePayload) Validate() error{
+func (p *AddCommentPayload) Validate() error{
 	validate := validator.New()
 	return validate.Struct(p)
 }
