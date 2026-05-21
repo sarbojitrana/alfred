@@ -438,7 +438,7 @@ func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload 
 
 }
 
-func (r *TodoRepository) DeleteTodo(ctx context.Context, userID string, payload *todo.DeleteTodoByPayload ) error{
+func (r *TodoRepository) DeleteTodo(ctx context.Context, userID string, todoID uuid.UUID ) error{
 	stmt :=`
 		DELETE FROM todos
 		WHERE
@@ -446,7 +446,7 @@ func (r *TodoRepository) DeleteTodo(ctx context.Context, userID string, payload 
 			AND user_id = @user_id
 	`
 	result, err := r.server.DB.Pool.Exec(ctx, stmt, pgx.NamedArgs{
-		"todo_id" : payload.ID,
+		"todo_id" : todoID,
 		"user_id" : userID,
 	})
 
