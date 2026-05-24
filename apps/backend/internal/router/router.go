@@ -1,6 +1,5 @@
 package router
 
-
 import (
 	"net/http"
 
@@ -8,6 +7,7 @@ import (
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/sarbojitrana/go-alfred/internal/handler"
 	"github.com/sarbojitrana/go-alfred/internal/middleware"
+	v1 "github.com/sarbojitrana/go-alfred/internal/router/v1"
 	"github.com/sarbojitrana/go-alfred/internal/server"
 	"github.com/sarbojitrana/go-alfred/internal/service"
 	"golang.org/x/time/rate"
@@ -57,8 +57,10 @@ func NewRouter(s *server.Server, h *handler.Handlers, services *service.Services
 	registerSystemRoutes(router, h)
 
 	// register versioned routes
-	router.Group("/api/v1")
+	v1Router := router.Group("/api/v1")
 
+	//register versioned routes
+	v1.RegisterV1Routes(v1Router, h, middlewares)
 	return router
 
 }
