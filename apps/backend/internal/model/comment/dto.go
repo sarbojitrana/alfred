@@ -1,25 +1,20 @@
 package comment
 
 import (
-	"github.com/google/uuid"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
-
-
-//-------------------------------------------------------------------------------------------
-type AddCommentPayload struct{
-	TodoId 			uuid.UUID			`param:"id" validate:"required,uuid"`
-	Content			string				`json:"content" validate:"required,min=1,max=1000"`
+// -------------------------------------------------------------------------------------------
+type AddCommentPayload struct {
+	TodoID  uuid.UUID `param:"id" validate:"required,uuid"`
+	Content string    `json:"content" validate:"required,min=1,max=1000"`
 }
 
-
-func (p *AddCommentPayload) Validate() error{
+func (p *AddCommentPayload) Validate() error {
 	validate := validator.New()
 	return validate.Struct(p)
 }
-
-
 
 //-------------------------------------------------------------------------------------------
 

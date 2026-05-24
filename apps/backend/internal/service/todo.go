@@ -5,58 +5,56 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sarbojitrana/go-alfred/internal/errs"
 	"github.com/sarbojitrana/go-alfred/internal/middleware"
+	"github.com/sarbojitrana/go-alfred/internal/model"
 	"github.com/sarbojitrana/go-alfred/internal/model/todo"
 	"github.com/sarbojitrana/go-alfred/internal/repository"
 	"github.com/sarbojitrana/go-alfred/internal/server"
 )
 
-
-
-type TodoService struct{
-	server  		*server.Server
-	todoRepo		*repository.TodoRepository
-	categoryRepo	*repository.CategoryRepository
+type TodoService struct {
+	server       *server.Server
+	todoRepo     *repository.TodoRepository
+	categoryRepo *repository.CategoryRepository
 }
 
-func NewTooService( server *server.Server, todoRepo *repository.TodoRepository, categoryRepo *repository.CategoryRepository) *TodoService{
+func NewTodoService(server *server.Server, todoRepo *repository.TodoRepository, categoryRepo *repository.CategoryRepository) *TodoService {
 	return &TodoService{
-		server: server,
-		todoRepo: todoRepo,
+		server:       server,
+		todoRepo:     todoRepo,
 		categoryRepo: categoryRepo,
 	}
 }
 
-func (s *TodoService) CreateTodo(ctx echo.Context , userID string, payload *todo.CreateTodoPayload)(*todo.Todo, error){
+func (s *TodoService) CreateTodo(ctx echo.Context, userID string, payload *todo.CreateTodoPayload) (*todo.Todo, error) {
 	logger := middleware.GetLogger(ctx)
 
 	//Validate parent todo exists and belongs to the user(if provided)
-	if payload.ParentTodoID != nil{
-		parentTodo, err := s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, *payload.ParentTodoID )
-		if err != nil{
+	if payload.ParentTodoID != nil {
+		parentTodo, err := s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, *payload.ParentTodoID)
+		if err != nil {
 			logger.Error().Err(err).Msg("parent todo validation failed")
 			return nil, err
 		}
 
 		if !parentTodo.CanHaveChildren() {
-			err := errs.NewBadRequestError("Parent todo cannot have children(subtasks) can't have subtasks", false, nil, nil,nil)
+			err := errs.NewBadRequestError("Parent todo cannot have children(subtasks) can't have subtasks", false, nil, nil, nil)
 			logger.Warn().Msg("parent todo cannot have children")
 			return nil, err
 		}
 	}
 
-	if payload.CategoryID != nil{
-		_,err := s.categoryRepo.GetCategoryByID(ctx.Request().Context(), userID, *payload.CategoryID)
-		if err != nil{
+	if payload.CategoryID != nil {
+		_, err := s.categoryRepo.GetCategoryByID(ctx.Request().Context(), userID, *payload.CategoryID)
+		if err != nil {
 			logger.Error().Err(err).Msg("category validation failed")
 			return nil, err
 		}
 	}
 
 	todoItem, err := s.todoRepo.CreateTodo(ctx.Request().Context(), userID, payload)
-	if err != nil{
+	if err != nil {
 		logger.Error().Err(err).Msg("failed to create todo")
 	}
-
 
 	//business event log
 	eventLogger := middleware.GetLogger(ctx)
@@ -66,7 +64,7 @@ func (s *TodoService) CreateTodo(ctx echo.Context , userID string, payload *todo
 		Str("todo_id", todoItem.ID.String()).
 		Str("title", todoItem.Title).
 		Str("category_id", func() string {
-			if todoItem.CategoryID != nil{
+			if todoItem.CategoryID != nil {
 				return todoItem.CategoryID.String()
 			}
 			return ""
@@ -77,29 +75,41 @@ func (s *TodoService) CreateTodo(ctx echo.Context , userID string, payload *todo
 	return todoItem, nil
 }
 
-func (s *TodoService) GetTodosByID(ctx echo.Context, userID string, query uuid.UUID) (*todo.PopulatedTodo, error){
+func (s *TodoService) GetTodosByID(ctx echo.Context, userID string, query uuid.UUID) (*todo.PopulatedTodo, error) {
 	logger := middleware.GetLogger(ctx)
 
 	todoItem, err := s.todoRepo.GetTodoByID(ctx.Request().Context(), userID, query)
-	if err != nil{
+	if err != nil {
 		logger.Error().Err(err).Msg("failed to fetch todos")
 		return nil, err
 	}
 	return todoItem, nil
 }
 
-func (s *TodoService) UpdateTodo(ctx echo.Context, userID string, payload *todo.UpdateTodoPayload)(*todo.Todo, error){
+func (s *TodoService) GetTodos(ctx echo.Context, userID string, query *todo.GetTodosQuery) (*model.PaginatedResponse[todo.PopulatedTodo], error) {
 	logger := middleware.GetLogger(ctx)
 
-	if payload.ParentTodoID != nil{
+	result, err := s.todoRepo.GetTodos(ctx.Request().Context(), userID, query)
+	if err != nil {
+		logger.Error().Err(err).Msg("failed to fetch todos")
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (s *TodoService) UpdateTodo(ctx echo.Context, userID string, payload *todo.UpdateTodoPayload) (*todo.Todo, error) {
+	logger := middleware.GetLogger(ctx)
+
+	if payload.ParentTodoID != nil {
 		parentTodo, err := s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, *payload.ParentTodoID)
 
-		if err != nil{
+		if err != nil {
 			logger.Error().Err(err).Msg("parent todo validation failed")
 			return nil, err
 		}
 
-		if parentTodo.ID == payload.ID{
+		if parentTodo.ID == payload.ID {
 			err := errs.NewBadRequestError("Todo cannot be its own parent", false, nil, nil, nil)
 			logger.Warn().Msg("todo cannot be its own parent")
 			return nil, err
@@ -180,4 +190,3 @@ func (s *TodoService) GetTodoStats(ctx echo.Context, userID string) (*todo.TodoS
 
 	return stats, nil
 }
-
