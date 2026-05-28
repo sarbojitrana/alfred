@@ -6,13 +6,12 @@ import (
 )
 
 const (
-	RequestIDHeader = "X-Request-ID"				// for request header
-	RequestIDKey = "request_id"						// for request context
+	RequestIDHeader = "X-Request-ID" // for request header
+	RequestIDKey    = "request_id"   // for request context
 )
 
-
-func RequestID() echo.MiddlewareFunc{													// a middleware takes a handler and returns a handler and a handler takes a request context and returns error
-	return func(next echo.HandlerFunc) echo.HandlerFunc{
+func RequestID() echo.MiddlewareFunc { // a middleware takes a handler and returns a handler and a handler takes a request context and returns error
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			requestID := c.Request().Header.Get(RequestIDHeader)
 
@@ -28,13 +27,10 @@ func RequestID() echo.MiddlewareFunc{													// a middleware takes a handle
 	}
 }
 
-
-
-func GetRequestID(c echo.Context) string{
-	if requestID, ok := c.Get(RequestIDKey).(string) ; ok{
+func GetRequestID(c echo.Context) string {
+	if requestID, ok := c.Get(RequestIDKey).(string); ok {
 		return requestID
 	}
 
 	return ""
 }
-

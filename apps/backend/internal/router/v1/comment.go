@@ -6,9 +6,7 @@ import (
 	"github.com/sarbojitrana/go-alfred/internal/middleware"
 )
 
-
-
-func registerCommentRoutes(r *echo.Group, h *handler.CommentHandler, auth *middleware.AuthMiddleware){
+func registerCommentRoutes(r *echo.Group, h *handler.CommentHandler, auth *middleware.AuthMiddleware) {
 	//Comment operations
 	comments := r.Group("/comments")
 	comments.Use(auth.RequireAuth)

@@ -9,33 +9,32 @@ import (
 	"github.com/sarbojitrana/go-alfred/internal/server"
 )
 
-
-type CommentService struct{
-	server			*server.Server
-	commentRepo		*repository.CommentRepository
-	todoRepo		*repository.TodoRepository
+type CommentService struct {
+	server      *server.Server
+	commentRepo *repository.CommentRepository
+	todoRepo    *repository.TodoRepository
 }
 
-func NewCommentService(server *server.Server, commentRepo *repository.CommentRepository, todoRepo *repository.TodoRepository) *CommentService{
+func NewCommentService(server *server.Server, commentRepo *repository.CommentRepository, todoRepo *repository.TodoRepository) *CommentService {
 	return &CommentService{
-		server: server,
+		server:      server,
 		commentRepo: commentRepo,
-		todoRepo: todoRepo,
+		todoRepo:    todoRepo,
 	}
 }
 
-func (s *CommentService) AddComment(ctx echo.Context, userID string, todoID uuid.UUID, payload *comment.AddCommentPayload) (*comment.Comment, error){
+func (s *CommentService) AddComment(ctx echo.Context, userID string, todoID uuid.UUID, payload *comment.AddCommentPayload) (*comment.Comment, error) {
 	logger := middleware.GetLogger(ctx)
 
 	// Validate todo exists and belongs to the user
-	_,err :=  s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, todoID)
-	if err != nil{
+	_, err := s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, todoID)
+	if err != nil {
 		logger.Error().Err(err).Msg("todo validation failed")
 		return nil, err
 	}
 
 	commentItem, err := s.commentRepo.AddComment(ctx.Request().Context(), userID, todoID, payload)
-	if err != nil{
+	if err != nil {
 		logger.Error().Err(err).Msg("failed to add comment")
 		return nil, err
 	}
@@ -47,22 +46,22 @@ func (s *CommentService) AddComment(ctx echo.Context, userID string, todoID uuid
 		Str("comment_id", commentItem.ID.String()).
 		Str("todo_id", todoID.String()).
 		Msg("Comment added successfully")
-	
+
 	return commentItem, nil
 }
 
-func (s *CommentService) GetCommentsByTodoID(ctx echo.Context, userID string, todoID uuid.UUID)([]comment.Comment, error){
+func (s *CommentService) GetCommentsByTodoID(ctx echo.Context, userID string, todoID uuid.UUID) ([]comment.Comment, error) {
 	logger := middleware.GetLogger(ctx)
 
 	// validate todo exists and belongs to user
-	_,err := s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, todoID)
-	if err != nil{
+	_, err := s.todoRepo.CheckTodoExists(ctx.Request().Context(), userID, todoID)
+	if err != nil {
 		logger.Error().Err(err).Msg("todo validation failed")
 		return nil, err
 	}
 
-	comments,err := s.commentRepo.GetCommentsByTodoID(ctx.Request().Context(), userID, todoID)
-	if err != nil{
+	comments, err := s.commentRepo.GetCommentsByTodoID(ctx.Request().Context(), userID, todoID)
+	if err != nil {
 		logger.Error().Err(err).Msg("failed to fetch comments by todo ID")
 		return nil, err
 	}
@@ -95,18 +94,18 @@ func (s *CommentService) UpdateComment(ctx echo.Context, userID string, commentI
 	return commentItem, nil
 }
 
-func (s *CommentService) DeleteComment(ctx echo.Context, userID string, commentID uuid.UUID) error{
+func (s *CommentService) DeleteComment(ctx echo.Context, userID string, commentID uuid.UUID) error {
 	logger := middleware.GetLogger(ctx)
 
-	_,err := s.commentRepo.GetCommentByID(ctx.Request().Context(), userID, commentID)
-	if err != nil{
+	_, err := s.commentRepo.GetCommentByID(ctx.Request().Context(), userID, commentID)
+	if err != nil {
 		logger.Error().Err(err).Msg("comment validation failed")
 		return err
 	}
 
 	err = s.commentRepo.DeleteComment(ctx.Request().Context(), userID, commentID)
 
-	if err != nil{
+	if err != nil {
 		logger.Error().Err(err).Msg("failed to deleted comment")
 		return nil
 	}

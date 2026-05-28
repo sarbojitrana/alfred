@@ -2,24 +2,20 @@ package middleware
 
 import "github.com/sarbojitrana/go-alfred/internal/server"
 
-
-
-type RateLimitMiddleware struct{
+type RateLimitMiddleware struct {
 	server *server.Server
 }
 
-
-func NewRateLimitMiddleware (s *server.Server) *RateLimitMiddleware{
+func NewRateLimitMiddleware(s *server.Server) *RateLimitMiddleware {
 	return &RateLimitMiddleware{
-		server : s,
+		server: s,
 	}
 }
 
-
 func (r *RateLimitMiddleware) RecordRateLimitHit(endpoint string) {
-	if r.server.LoggerService != nil && r.server.LoggerService.GetApplication() != nil{
+	if r.server.LoggerService != nil && r.server.LoggerService.GetApplication() != nil {
 		r.server.LoggerService.GetApplication().RecordCustomEvent("RateLimitHit", map[string]interface{}{
-			"endpoint" : endpoint,
+			"endpoint": endpoint,
 		})
 	}
 }

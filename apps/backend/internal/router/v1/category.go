@@ -6,7 +6,7 @@ import (
 	"github.com/sarbojitrana/go-alfred/internal/middleware"
 )
 
-func registerCategoryRoutes(r *echo.Group, h *handler.CategoryHandler, auth *middleware.AuthMiddleware){
+func registerCategoryRoutes(r *echo.Group, h *handler.CategoryHandler, auth *middleware.AuthMiddleware) {
 	//Category operations
 	categories := r.Group("/categories")
 	categories.Use(auth.RequireAuth)

@@ -1,9 +1,8 @@
 package email
 
-
-func (c *Client) SendWelcomeEmail(to, firstName string) error{
+func (c *Client) SendWelcomeEmail(to, firstName string) error {
 	data := map[string]string{
-		"UserFirstName" : firstName,
+		"UserFirstName": firstName,
 	}
 
 	return c.SendEmail(

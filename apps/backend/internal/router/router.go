@@ -13,9 +13,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
-
-
-func NewRouter(s *server.Server, h *handler.Handlers, services *service.Services) *echo.Echo{
+func NewRouter(s *server.Server, h *handler.Handlers, services *service.Services) *echo.Echo {
 	middlewares := middleware.NewMiddlewares(s)
 
 	router := echo.New()
@@ -25,10 +23,10 @@ func NewRouter(s *server.Server, h *handler.Handlers, services *service.Services
 	//global middlewares
 	router.Use(
 		echoMiddleware.RateLimiterWithConfig(echoMiddleware.RateLimiterConfig{
-			Store : echoMiddleware.NewRateLimiterMemoryStore(rate.Limit(20)),
-			DenyHandler: func( c echo.Context, identifier string, err error) error{
+			Store: echoMiddleware.NewRateLimiterMemoryStore(rate.Limit(20)),
+			DenyHandler: func(c echo.Context, identifier string, err error) error {
 				// Record rate limit hit metrics
-				if rateLimitMiddleware := middlewares.RateLimit; rateLimitMiddleware != nil{
+				if rateLimitMiddleware := middlewares.RateLimit; rateLimitMiddleware != nil {
 					rateLimitMiddleware.RecordRateLimitHit(c.Path())
 				}
 
@@ -38,7 +36,7 @@ func NewRouter(s *server.Server, h *handler.Handlers, services *service.Services
 					Str("path", c.Path()).
 					Str("ip", c.RealIP()).
 					Msg("rate limit exceeded")
-				
+
 				return echo.NewHTTPError(http.StatusTooManyRequests, "Rate limit exceeded")
 			},
 		}),
