@@ -48,7 +48,7 @@ export const ZPopulatedTodo = ZTodo.extend({
   attachments: z.array(ZTodoAttachment),
 });
 
-export const ZTododStats = z.object({
+export const ZTodoStats = z.object({
   total: z.number(),
   draft: z.number(),
   active: z.number(),

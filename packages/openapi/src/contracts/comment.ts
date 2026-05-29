@@ -38,7 +38,7 @@ export const commentContract = c.router(
             path: "/comments/:id",
             method: "PATCH",
             body: ZTodoComment.pick({
-                continue: true,
+                content: true,
             }),
             responses:{
                 200: ZTodoComment,
