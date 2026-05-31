@@ -18,7 +18,7 @@ export const categoryContract = c.router(
                 page: z.number().min(1).optional(),
                 limit: z.number().min(1).max(100).optional(),
                 sort: z.enum(["created_at", "updated_at", "name"]).optional(),
-                order: z.enum(["asc", "dsc"]).optional(),
+                order: z.enum(["asc", "desc"]).optional(),
                 search: z.string().min(1).optional(),
             }),
             responses:{
@@ -47,7 +47,7 @@ export const categoryContract = c.router(
 
         getCategoryById:{
             summary : "Get category by ID",
-            path : "/categories/id",
+            path : "/categories/:id",
             method: "GET",
             description: "Get category by ID",
             responses:{
@@ -82,5 +82,8 @@ export const categoryContract = c.router(
             },
             metadata: metadata,
         }
+    },
+    {
+        pathPrefix: "/v1",
     }
 )

@@ -1903,7 +1903,7 @@
         ]
       }
     },
-    "/categories": {
+    "/v1/categories": {
       "get": {
         "description": "Get all caegories",
         "summary": "Get all categories",
@@ -1947,7 +1947,7 @@
               "type": "string",
               "enum": [
                 "asc",
-                "dsc"
+                "desc"
               ]
             }
           },
@@ -2124,14 +2124,23 @@
         ]
       }
     },
-    "/categories/id": {
+    "/v1/categories/{id}": {
       "get": {
         "description": "Get category by ID",
         "summary": "Get category by ID",
         "tags": [
           "Category"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "operationId": "getCategoryById",
         "responses": {
           "200": {
@@ -2183,9 +2192,7 @@
             "bearerAuth": []
           }
         ]
-      }
-    },
-    "/categories/{id}": {
+      },
       "patch": {
         "description": "Update category",
         "summary": "Update category",
