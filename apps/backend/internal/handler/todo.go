@@ -42,7 +42,7 @@ func (h *TodoHandler) GetTodoByID(c echo.Context) error {
 			userID := middleware.GetUserID(c)
 			return h.todoService.GetTodosByID(c, userID, payload.ID)
 		},
-		http.StatusCreated,
+		http.StatusOK,
 		&todo.GetTodoByIDPayload{},
 	)(c)
 }
@@ -54,7 +54,7 @@ func (h *TodoHandler) GetTodos(c echo.Context) error {
 			userID := middleware.GetUserID(c)
 			return h.todoService.GetTodos(c, userID, payload)
 		},
-		http.StatusCreated,
+		http.StatusOK,
 		&todo.GetTodosQuery{},
 	)(c)
 }

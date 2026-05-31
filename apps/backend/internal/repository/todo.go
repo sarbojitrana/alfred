@@ -51,7 +51,7 @@ func (r *TodoRepository) CreateTodo(ctx context.Context, userID string, payload 
 				@category_id,
 				@metadata
 			)
-		RETURING
+		RETURNING
 		*
 	`
 	priority := todo.PriorityMedium
@@ -133,9 +133,9 @@ func(r *TodoRepository) GetTodoByID(ctx context.Context, userID string, todoID u
 		todos t
 		LEFT JOIN todo_categories c ON c.id=t.category_id
 		AND c.user_id=t.user_id
-		LEFT JOIN todos child ON child.parent_id=t.id
+		LEFT JOIN todos child ON child.parent_todo_id=t.id
 		AND child.user_id=t.user_id
-		LEFT JOIN comments com ON com.todo_id=t.id
+		LEFT JOIN todo_comments com ON com.todo_id=t.id
 		AND com.user_id=t.user_id
 		LEFT JOIN todo_attachments att ON att.todo_id=t.id
 	WHERE
@@ -363,7 +363,7 @@ func (r *TodoRepository) GetTodos(ctx context.Context, userID string, query *tod
 func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload *todo.UpdateTodoPayload)(*todo.Todo, error){
 	stmt := "UPDATE todos SET "
 	args := pgx.NamedArgs{
-		"todos_id" : payload.ID,
+		"todo_id" : payload.ID,
 		"user_id"	: userID,
 	}
 	setClauses := []string{}

@@ -17,6 +17,7 @@ func registerCategoryRoutes(r *echo.Group, h *handler.CategoryHandler, auth *mid
 
 	//Individual category operations
 	dynamicCategory := categories.Group("/:id")
+	dynamicCategory.GET("", h.GetCategoryByID)
 	dynamicCategory.PATCH("", h.UpdateCategory)
 	dynamicCategory.DELETE("", h.DeleteCategory)
 }

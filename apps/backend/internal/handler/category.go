@@ -49,6 +49,18 @@ func (h *CategoryHandler) GetCategories(c echo.Context) error {
 	)(c)
 }
 
+func (h *CategoryHandler) GetCategoryByID(c echo.Context) error{
+	return Handle(
+		h.Handler,
+		func(c echo.Context, payload *category.GetCategoryByIDPayload) ( *category.Category, error){
+			userID := middleware.GetUserID(c)
+			return h.categoryService.GetCategoryByID(c, userID, payload.ID)
+		},
+		http.StatusOK,
+		&category.GetCategoryByIDPayload{},
+	)(c)
+}
+
 func (h *CategoryHandler) UpdateCategory(c echo.Context) error {
 	return Handle(
 		h.Handler,

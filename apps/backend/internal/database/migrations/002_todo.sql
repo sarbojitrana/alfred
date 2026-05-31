@@ -30,9 +30,9 @@ CREATE TABLE todos(
     priority TEXT NOT NULL DEFAULT 'medium',
     due_date TIMESTAMPTZ,
     completed_at TIMESTAMPTZ,
-    parent_todo_id UUID REFERENCES todos,
-    category_id UUID REFERENCES todo_categories,
-    metajson JSONB,
+    parent_todo_id UUID REFERENCES todos ON DELETE CASCADE,
+    category_id UUID REFERENCES todo_categories ON DELETE SET NULL,
+    metadata JSONB,
     sort_order SERIAL
 );
 
@@ -55,7 +55,7 @@ CREATE TABLE todo_comments(
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     todo_id UUID NOT NULL REFERENCES todos ON DELETE CASCADE,
-    user_id UUID NOT NULL,
+    user_id TEXT NOT NULL,
     content TEXT NOT NULL
 );
 

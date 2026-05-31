@@ -1,74 +1,81 @@
 package config
 
 import (
-	"os"
-	"strings"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/v2"
 	"github.com/rs/zerolog"
+	"os"
+	"strings"
 )
 
-type Config struct{
-	Primary	 			Primary					`koanf:"primary" validate:"required"`
-	Server	 			ServerConfig			`koanf:"server" validate:"required"`
-	Database  			DatabaseConfig			`koanf:"database" validate:"required"`
-	Auth 				AuthConfig				`koanf:"auth" validate:"required"`
-	Redis     			RedisConfig 			`koanf:"redis" validate:"required"`
-	Observability		*ObservabilityConfig	`koanf:"observability"`
-	Integration			IntegrationConfig		`koanf:"integration" validate:"required"`
+type Config struct {
+	Primary       Primary              `koanf:"primary" validate:"required"`
+	Server        ServerConfig         `koanf:"server" validate:"required"`
+	Database      DatabaseConfig       `koanf:"database" validate:"required"`
+	Auth          AuthConfig           `koanf:"auth" validate:"required"`
+	Redis         RedisConfig          `koanf:"redis" validate:"required"`
+	Observability *ObservabilityConfig `koanf:"observability"`
+	Integration   IntegrationConfig    `koanf:"integration" validate:"required"`
+	AWS           AWSconfig            `koanf:"aws" validate:"required"`
 }
 
 type Primary struct {
-	Env 	string 		`koanf:"env" validate:"required"`
+	Env string `koanf:"env" validate:"required"`
 }
 
 type ServerConfig struct {
-	Port               string   	`koanf:"port" validate:"required"`
-	ReadTimeout        int      	`koanf:"read_timeout" validate:"required"`
-	WriteTimeout        int      	`koanf:"write_timeout" validate:"required"`
-	IdleTimeout        int      	`koanf:"idle_timeout" validate:"required"`
-	CORSAllowedOrigins []string 	`koanf:"cors_allowed_origins" validate:"required"`
+	Port               string   `koanf:"port" validate:"required"`
+	ReadTimeout        int      `koanf:"read_timeout" validate:"required"`
+	WriteTimeout       int      `koanf:"write_timeout" validate:"required"`
+	IdleTimeout        int      `koanf:"idle_timeout" validate:"required"`
+	CORSAllowedOrigins []string `koanf:"cors_allowed_origins" validate:"required"`
 }
 
 type DatabaseConfig struct {
-	Host            	string 		`koanf:"host" validate:"required"`
-	Port            	int 		`koanf:"port" validate:"required"`
-	User            	string 		`koanf:"user" validate:"required"`
-	Password        	string 		`koanf:"password" validate:"required"`
-	Name            	string 		`koanf:"name" validate:"required"`
-	SSLMode         	string 		`koanf:"ssl_mode" validate:"required"`
-	MaxOpenConns    	int    		`koanf:"max_open_conns" validate:"required"`
-	MaxIdleConns    	int    		`koanf:"max_idle_conns" validate:"required"`
-	ConnMaxLifetime 	int    		`koanf:"conn_max_lifetime" validate:"required"`
-	ConnMaxIdleTime 	int    		`koanf:"conn_max_idle_time" validate:"required"`
+	Host            string `koanf:"host" validate:"required"`
+	Port            int    `koanf:"port" validate:"required"`
+	User            string `koanf:"user" validate:"required"`
+	Password        string `koanf:"password" validate:"required"`
+	Name            string `koanf:"name" validate:"required"`
+	SSLMode         string `koanf:"ssl_mode" validate:"required"`
+	MaxOpenConns    int    `koanf:"max_open_conns" validate:"required"`
+	MaxIdleConns    int    `koanf:"max_idle_conns" validate:"required"`
+	ConnMaxLifetime int    `koanf:"conn_max_lifetime" validate:"required"`
+	ConnMaxIdleTime int    `koanf:"conn_max_idle_time" validate:"required"`
 }
 
 type AuthConfig struct {
-	SecretKey 		string `koanf:"secret_key" validate:"required"`
+	SecretKey string `koanf:"secret_key" validate:"required"`
 }
 
-type RedisConfig struct{
-	Address 	string		`koanf:"address" validate:"required"` 
+type AWSconfig struct {
+	Region          string `koanf:"region" validate:"required"`
+	AccessKeyID     string `koanf:"access_key_id" validate:"required"`
+	SecretAccessKey string `koanf:"secret_access_key" validate:"required"`
+	UploadBucket    string `koanf:"upload_bucket" validate:"required"`
+	EndpointURL     string `koanf:"endpoint_url"`
 }
 
-type IntegrationConfig struct{
-	ResendAPIKey		string 		`koanf:"resend_api_key" validate:"required"`
+type RedisConfig struct {
+	Address string `koanf:"address" validate:"required"`
 }
 
+type IntegrationConfig struct {
+	ResendAPIKey string `koanf:"resend_api_key" validate:"required"`
+}
 
-
-func LoadConfig() (*Config, error){
-	logger := zerolog.New(zerolog.ConsoleWriter{Out : os.Stderr}).With().Timestamp().Logger()
+func LoadConfig() (*Config, error) {
+	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
 	k := koanf.New(".")
 
-	err := k.Load(env.Provider("ALFRED_", ".", func(s string) string{
-		return strings.ToLower(strings.TrimPrefix(s,"ALFRED_"))
+	err := k.Load(env.Provider("ALFRED_", ".", func(s string) string {
+		return strings.ToLower(strings.TrimPrefix(s, "ALFRED_"))
 	}), nil)
 
-	if(err != nil){
+	if err != nil {
 		logger.Fatal().Err(err).Msg("could not load initial env variables")
 	}
 
@@ -80,19 +87,10 @@ func LoadConfig() (*Config, error){
 
 	err = validate.Struct(mainConfig)
 
-	if err != nil{
+	if err != nil {
 		logger.Fatal().Err(err).Msg("config validation failed")
 	}
 
 	return mainConfig, nil
 
 }
-
-
-
-
-
-
-
-
-
