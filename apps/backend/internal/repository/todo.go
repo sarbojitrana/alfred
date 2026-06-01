@@ -15,19 +15,15 @@ import (
 	"github.com/sarbojitrana/go-alfred/internal/server"
 )
 
-
-
-type TodoRepository struct{
+type TodoRepository struct {
 	server *server.Server
 }
 
-
-func NewTodoRepository(server *server.Server ) *TodoRepository{
-	return &TodoRepository{server : server}
+func NewTodoRepository(server *server.Server) *TodoRepository {
+	return &TodoRepository{server: server}
 }
 
-
-func (r *TodoRepository) CreateTodo(ctx context.Context, userID string, payload *todo.CreateTodoPayload) (*todo.Todo, error){
+func (r *TodoRepository) CreateTodo(ctx context.Context, userID string, payload *todo.CreateTodoPayload) (*todo.Todo, error) {
 	stmt := `
 		INSERT INTO
 			todos(
@@ -55,38 +51,37 @@ func (r *TodoRepository) CreateTodo(ctx context.Context, userID string, payload 
 		*
 	`
 	priority := todo.PriorityMedium
-	
-	if payload.Priority != nil{
+
+	if payload.Priority != nil {
 		priority = *payload.Priority
 	}
 
 	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
-		"user_id" : userID,
-		"title" : payload.Title,
-		"description" : payload.Description,
-		"priority" : priority,
-		"due_date" : payload.DueDate,
-		"parent_todo_id" : payload.ParentTodoID,
-		"category_id" : payload.CategoryID,
-		"metadata"	: payload.Metadata,
+		"user_id":        userID,
+		"title":          payload.Title,
+		"description":    payload.Description,
+		"priority":       priority,
+		"due_date":       payload.DueDate,
+		"parent_todo_id": payload.ParentTodoID,
+		"category_id":    payload.CategoryID,
+		"metadata":       payload.Metadata,
 	})
 
-	if err != nil{
-		return nil, fmt.Errorf("failed to execute create todo query for user_id=%s title=%s: %w", userID, payload.Title, err )
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute create todo query for user_id=%s title=%s: %w", userID, payload.Title, err)
 	}
 
-	todoItem,err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.Todo])
+	todoItem, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.Todo])
 
-	if err != nil{
-		return nil, fmt.Errorf("failed to execute create todo query for user_id=%s title=%s: %w", userID, payload.Title, err )
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute create todo query for user_id=%s title=%s: %w", userID, payload.Title, err)
 	}
 
-	return &todoItem,nil
+	return &todoItem, nil
 
 }
 
-
-func(r *TodoRepository) GetTodoByID(ctx context.Context, userID string, todoID uuid.UUID)(*todo.PopulatedTodo, error){
+func (r *TodoRepository) GetTodoByID(ctx context.Context, userID string, todoID uuid.UUID) (*todo.PopulatedTodo, error) {
 	stmt := `
 	SELECT
 		t.*,
@@ -146,26 +141,25 @@ func(r *TodoRepository) GetTodoByID(ctx context.Context, userID string, todoID u
 		c.id
 	
 	`
-	rows,err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
-		"id" : todoID,
-		"user_id" : userID,
+	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
+		"id":      todoID,
+		"user_id": userID,
 	})
 
-	if err != nil{
-		return nil, fmt.Errorf("failed to execute get todo by id query for todo_id=%s user_id=%s: %w", todoID.String() , userID, err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute get todo by id query for todo_id=%s user_id=%s: %w", todoID.String(), userID, err)
 	}
 
 	todoItem, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.PopulatedTodo])
-	
-	if err != nil{
-		return nil, fmt.Errorf("failed to execute get todo by id query for todo_id=%s user_id=%s: %w", todoID.String() , userID, err)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute get todo by id query for todo_id=%s user_id=%s: %w", todoID.String(), userID, err)
 	}
 
-	return &todoItem,nil
+	return &todoItem, nil
 }
 
-
-func (r *TodoRepository) CheckTodoExists(ctx context.Context, userID string, todoID uuid.UUID)(*todo.Todo, error){
+func (r *TodoRepository) CheckTodoExists(ctx context.Context, userID string, todoID uuid.UUID) (*todo.Todo, error) {
 	stmt := `
 		SELECT 
 			*
@@ -176,8 +170,8 @@ func (r *TodoRepository) CheckTodoExists(ctx context.Context, userID string, tod
 			AND user_id=@user_id
 	`
 	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
-		"id" : todoID,
-		"user_id" : userID,
+		"id":      todoID,
+		"user_id": userID,
 	})
 
 	if err != nil {
@@ -191,7 +185,7 @@ func (r *TodoRepository) CheckTodoExists(ctx context.Context, userID string, tod
 	return &todoItem, nil
 }
 
-func (r *TodoRepository) GetTodos(ctx context.Context, userID string, query *todo.GetTodosQuery)(*model.PaginatedResponse[todo.PopulatedTodo], error){
+func (r *TodoRepository) GetTodos(ctx context.Context, userID string, query *todo.GetTodosQuery) (*model.PaginatedResponse[todo.PopulatedTodo], error) {
 	stmt := `
 	SELECT 
 		t.*,
@@ -244,34 +238,34 @@ func (r *TodoRepository) GetTodos(ctx context.Context, userID string, query *tod
 	`
 
 	args := pgx.NamedArgs{
-		"user_id" : userID,
+		"user_id": userID,
 	}
 	conditions := []string{"t.user_id = @user_id"}
 
-	if query.Status != nil{
+	if query.Status != nil {
 		conditions = append(conditions, "t.status = @status")
 		args["status"] = *query.Status
 	}
 
-	if query.Priority != nil{
+	if query.Priority != nil {
 		conditions = append(conditions, "t.priority = @priority")
 		args["priority"] = *query.Priority
 	}
 
-	if query.CategoryID != nil{
+	if query.CategoryID != nil {
 		conditions = append(conditions, "t.category_id = @category_id")
 		args["category_id"] = *query.CategoryID
 	}
 
-	if query.ParentTodoID != nil{
+	if query.ParentTodoID != nil {
 		conditions = append(conditions, "t.parent_todo_id = @parent_todo_id")
 		args["parent_todo_id"] = *query.ParentTodoID
-	} else{
+	} else {
 		// By default, only show root todos (no parent)
 		conditions = append(conditions, "t.parent_todo_id is NULL")
 	}
 
-	if query.DueFrom != nil{
+	if query.DueFrom != nil {
 		conditions = append(conditions, "t.due_date >=@due_from")
 		args["due_from"] = *query.DueFrom
 	}
@@ -285,66 +279,66 @@ func (r *TodoRepository) GetTodos(ctx context.Context, userID string, query *tod
 		conditions = append(conditions, "t.due_date < NOW() AND t.status != 'completed'")
 	}
 
-	if query.Completed != nil{
-		if *query.Completed{
+	if query.Completed != nil {
+		if *query.Completed {
 			conditions = append(conditions, "t.status = 'completed'")
-		} else{
+		} else {
 			conditions = append(conditions, "t.status != 'completed'")
 		}
 	}
 
-	if query.Search != nil{
+	if query.Search != nil {
 		conditions = append(conditions, "t.title ILIKE @search OR t.description ILIKE @search")
 		args["search"] = "%" + *query.Search + "%"
 	}
 
-	if len(conditions) > 0{
+	if len(conditions) > 0 {
 		stmt += " WHERE " + strings.Join(conditions, " AND ")
 	}
 
 	countStmt := "SELECT COUNT(*) FROM todos t"
-	if len(conditions) > 0{
+	if len(conditions) > 0 {
 		countStmt += " WHERE " + strings.Join(conditions, " AND ")
 	}
 
 	var total int
-	err := r.server.DB.Pool.QueryRow(ctx,countStmt, args).Scan(&total)
-	
-	if err != nil{
+	err := r.server.DB.Pool.QueryRow(ctx, countStmt, args).Scan(&total)
+
+	if err != nil {
 		return nil, fmt.Errorf("failed to get total count for todos user_id=%s: %w", userID, err)
 	}
 
 	stmt += " GROUP BY t.id, c.id"
 
-	if query.Sort != nil{
+	if query.Sort != nil {
 		stmt += " ORDER BY t." + *query.Sort
-		if query.Order != nil && *query.Order == "desc"{
+		if query.Order != nil && *query.Order == "desc" {
 			stmt += " DESC"
-		} else{
+		} else {
 			stmt += " ASC"
 		}
-	} else{
+	} else {
 		stmt += " ORDER BY t.created_at DESC"
 	}
 
 	stmt += " LIMIT @limit OFFSET @offset"
 	args["limit"] = *query.Limit
-	args["offset"] = (*query.Page -1) * (*query.Limit)
+	args["offset"] = (*query.Page - 1) * (*query.Limit)
 
 	rows, err := r.server.DB.Pool.Query(ctx, stmt, args)
 
-	if err != nil{
+	if err != nil {
 		return nil, fmt.Errorf("failed to execute get todos query for user_id=%s: %w", userID, err)
 	}
 
-	todos,err := pgx.CollectRows(rows, pgx.RowToStructByName[todo.PopulatedTodo])
-	if err != nil{
-		if errors.Is(err, pgx.ErrNoRows){
+	todos, err := pgx.CollectRows(rows, pgx.RowToStructByName[todo.PopulatedTodo])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return &model.PaginatedResponse[todo.PopulatedTodo]{
-				Data: []todo.PopulatedTodo{},
-				Page:	*query.Page,
-				Limit: *query.Limit,
-				Total: 0,
+				Data:       []todo.PopulatedTodo{},
+				Page:       *query.Page,
+				Limit:      *query.Limit,
+				Total:      0,
 				TotalPages: 0,
 			}, nil
 		}
@@ -353,44 +347,44 @@ func (r *TodoRepository) GetTodos(ctx context.Context, userID string, query *tod
 	}
 
 	return &model.PaginatedResponse[todo.PopulatedTodo]{
-		Data:	todos,
-		Page:	*query.Page,
-		Total: total,
-		TotalPages: (total + (*query.Limit -1)) / *query.Limit,
+		Data:       todos,
+		Page:       *query.Page,
+		Total:      total,
+		TotalPages: (total + (*query.Limit - 1)) / *query.Limit,
 	}, nil
 }
 
-func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload *todo.UpdateTodoPayload)(*todo.Todo, error){
+func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload *todo.UpdateTodoPayload) (*todo.Todo, error) {
 	stmt := "UPDATE todos SET "
 	args := pgx.NamedArgs{
-		"todo_id" : payload.ID,
-		"user_id"	: userID,
+		"todo_id": payload.ID,
+		"user_id": userID,
 	}
 	setClauses := []string{}
 
-	if payload.Title != nil{
+	if payload.Title != nil {
 		setClauses = append(setClauses, "title = @title")
 		args["title"] = *payload.Title
 	}
 
-	if payload.Description != nil{
+	if payload.Description != nil {
 		setClauses = append(setClauses, "description = @description")
 		args["description"] = *payload.Description
 	}
 
-	if payload.Status != nil{
+	if payload.Status != nil {
 		setClauses = append(setClauses, "status = @status")
 		args["status"] = *payload.Status
 
 		if *payload.Status == todo.StatusCompleted {
 			setClauses = append(setClauses, "completed_at = @completed_at")
 			args["completed_at"] = time.Now()
-		} else{
+		} else {
 			setClauses = append(setClauses, "completed_at = NULL")
 		}
 	}
 
-	if payload.Priority != nil{
+	if payload.Priority != nil {
 		setClauses = append(setClauses, "priority = @priority")
 		args["priority"] = *payload.Priority
 	}
@@ -415,7 +409,7 @@ func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload 
 		args["metadata"] = payload.Metadata
 	}
 
-	if len(setClauses) == 0{
+	if len(setClauses) == 0 {
 		return nil, errs.NewBadRequestError("no fields to update", false, nil, nil, nil)
 	}
 
@@ -424,13 +418,13 @@ func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload 
 
 	rows, err := r.server.DB.Pool.Query(ctx, stmt, args)
 
-	if err != nil{
+	if err != nil {
 		return nil, fmt.Errorf("failed to execute the query: %w", err)
 	}
 
-	updatedRow,err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.Todo])
+	updatedRow, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.Todo])
 
-	if err != nil{
+	if err != nil {
 		return nil, fmt.Errorf("failed to collect row from table:todos: %w", err)
 	}
 
@@ -438,23 +432,23 @@ func (r *TodoRepository) UpdateTodo(ctx context.Context, userID string, payload 
 
 }
 
-func (r *TodoRepository) DeleteTodo(ctx context.Context, userID string, todoID uuid.UUID ) error{
-	stmt :=`
+func (r *TodoRepository) DeleteTodo(ctx context.Context, userID string, todoID uuid.UUID) error {
+	stmt := `
 		DELETE FROM todos
 		WHERE
 			id = @todo_id
 			AND user_id = @user_id
 	`
 	result, err := r.server.DB.Pool.Exec(ctx, stmt, pgx.NamedArgs{
-		"todo_id" : todoID,
-		"user_id" : userID,
+		"todo_id": todoID,
+		"user_id": userID,
 	})
 
-	if err != nil{
+	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
 	}
 
-	if result.RowsAffected() == 0{
+	if result.RowsAffected() == 0 {
 		code := "TODO NOT FOUND"
 		return errs.NewNotFoundError("todo not found", false, &code)
 	}
@@ -462,7 +456,7 @@ func (r *TodoRepository) DeleteTodo(ctx context.Context, userID string, todoID u
 	return nil
 }
 
-func (r *TodoRepository) GetTodoStats(ctx context.Context, userID string)(*todo.TodoStats, error){
+func (r *TodoRepository) GetTodoStats(ctx context.Context, userID string) (*todo.TodoStats, error) {
 	stmt := `
 		SELECT
 			COUNT(*) AS total,
@@ -496,17 +490,17 @@ func (r *TodoRepository) GetTodoStats(ctx context.Context, userID string)(*todo.
 			todos
 		WHERE
 			user_id=@user_id
-	`	
+	`
 
-	rows,err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
-		"user_id" : userID,
+	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
+		"user_id": userID,
 	})
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 
-	stats,err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.TodoStats])
+	stats, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.TodoStats])
 	if err != nil {
 		return nil, fmt.Errorf("failed to collect row from table:todos: %w", err)
 	}
@@ -514,4 +508,146 @@ func (r *TodoRepository) GetTodoStats(ctx context.Context, userID string)(*todo.
 	return &stats, nil
 }
 
+func (r *TodoRepository) GetTodoAttachment(ctx context.Context, todoID uuid.UUID, attachmentID uuid.UUID) (*todo.TodoAttachment, error) {
+	stmt := `
+		SELECT
+			*
+		FROM
+			todo_attachments
+		WHERE
+			todo_id = @todo_id
+			AND id = @attachment_id
+	`
+	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
+		"todo_id":       todoID,
+		"attachment_id": attachmentID,
+	})
 
+	if err != nil {
+		return nil, fmt.Errorf("failed to get todo attachment: %w", err)
+	}
+
+	attachment, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.TodoAttachment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			code := "ATTACHMENT_NOT_FOUND"
+			return nil, errs.NewNotFoundError("attachment not found", false, &code)
+		}
+		return nil, fmt.Errorf("failed to collect row from table todo:todo_attachments: %w", err)
+	}
+
+	return &attachment, nil
+}
+
+func (r *TodoRepository) GetTodoAttachments(
+	ctx context.Context,
+	todoID uuid.UUID,
+) ([]todo.TodoAttachment, error) {
+	stmt := `
+		SELECT
+			*
+		FROM
+			todo_attachments
+		WHERE
+			todo_id = @todo_id
+		ORDER BY
+			created_at DESC
+	`
+
+	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
+		"todo_id": todoID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get todo attachments: %w", err)
+	}
+
+	attachments, err := pgx.CollectRows(rows, pgx.RowToStructByName[todo.TodoAttachment])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return []todo.TodoAttachment{}, nil
+		}
+		return nil, fmt.Errorf("failed to collect rows from table:todo_attachments: %w", err)
+	}
+
+	return attachments, nil
+}
+
+func (r *TodoRepository) DeleteTodoAttachment(
+	ctx context.Context,
+	todoID uuid.UUID,
+	attachmentID uuid.UUID,
+) error {
+	stmt := `
+		DELETE FROM todo_attachments
+		WHERE
+			todo_id = @todo_id
+			AND id = @attachment_id
+	`
+
+	result, err := r.server.DB.Pool.Exec(ctx, stmt, pgx.NamedArgs{
+		"todo_id":       todoID,
+		"attachment_id": attachmentID,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete todo attachment: %w", err)
+	}
+
+	if result.RowsAffected() == 0 {
+		code := "ATTACHMENT_NOT_FOUND"
+		return errs.NewNotFoundError("attachment not found", false, &code)
+	}
+
+	return nil
+}
+
+func (r *TodoRepository) UploadTodoAttachment(
+	ctx context.Context,
+	todoID uuid.UUID,
+	userID string,
+	s3Key string,
+	fileName string,
+	fileSize int64,
+	mimeType string,
+) (*todo.TodoAttachment, error) {
+	stmt := `
+		INSERT INTO
+			todo_attachments (
+				todo_id,
+				name,
+				uploaded_by,
+				download_key,
+				file_size,
+				mime_type
+			)
+		VALUES
+			(
+				@todo_id,
+				@name,
+				@uploaded_by,
+				@download_key,
+				@file_size,
+				@mime_type
+			)
+		RETURNING
+			*
+	`
+
+	rows, err := r.server.DB.Pool.Query(ctx, stmt, pgx.NamedArgs{
+		"todo_id":      todoID,
+		"name":         fileName,
+		"uploaded_by":  userID,
+		"download_key": s3Key,
+		"file_size":    fileSize,
+		"mime_type":    mimeType,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create todo attachment for todo_id=%s: %w", todoID.String(), err)
+	}
+
+	attachment, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[todo.TodoAttachment])
+	if err != nil {
+		return nil, fmt.Errorf("failed to collect row from table:todo_attachments: %w", err)
+	}
+
+	return &attachment, nil
+}

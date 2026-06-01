@@ -147,12 +147,12 @@ func (p *DeleteTodoAttachmentPayload) Validate() error {
 
 //-------------------------------------------------------------------------------------------
 
-type GetTodoAttachmentPresignedURLPayload struct {
+type GetAttachmentPresignedURLPayload struct {
 	TodoID       uuid.UUID `param:"id" validate:"required,uuid"`
 	AttachmentID uuid.UUID `param:"attachmentId" validate:"required,uuid"`
 }
 
-func (p *GetTodoAttachmentPresignedURLPayload) Validate() error {
+func (p *GetAttachmentPresignedURLPayload) Validate() error {
 	validate := validator.New()
 	return validate.Struct(p)
 }
