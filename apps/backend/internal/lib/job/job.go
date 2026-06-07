@@ -1,63 +1,73 @@
 package job
 
+import (
+	"context"
 
-
-import(
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog"
 	"github.com/sarbojitrana/go-alfred/internal/config"
+	"github.com/sarbojitrana/go-alfred/internal/lib/email"
 )
 
-type JobService struct{					// background task queue
-	Client *asynq.Client
-	server *asynq.Server
-	logger *zerolog.Logger
+type JobService struct { // background task queue
+	Client      *asynq.Client
+	server      *asynq.Server
+	logger      *zerolog.Logger
+	authService AuthServiceInterface
+	emailClient *email.Client
 }
 
-
+type AuthServiceInterface interface {
+	GetUserEmail(ctx context.Context, userID string) (string, error)
+}
 
 // using dependency injection
 
-func NewJobService( logger *zerolog.Logger, cfg *config.Config) *JobService{
+func NewJobService(logger *zerolog.Logger, cfg *config.Config) *JobService {
 	redisAddr := cfg.Redis.Address
 
-	client := asynq.NewClient(asynq.RedisClientOpt{			// will only enqueue tasks
-		Addr: redisAddr,
+	client := asynq.NewClient(asynq.RedisClientOpt{
+		Addr:     redisAddr,
+		Password: cfg.Redis.Password,
+		DB:       0,
 	})
 
-	server := asynq.NewServer(								// runs on goroutine
-		asynq.RedisClientOpt{
-			Addr : redisAddr,
-		},
+	server := asynq.NewServer(
+		asynq.RedisClientOpt{Addr: redisAddr, Password: cfg.Redis.Password, DB: 0},
 		asynq.Config{
 			Concurrency: 10,
-			Queues : map[string]int{
-				"critical" : 6,
-				"default":   3,
-				"low" :		 1,
+			Queues: map[string]int{
+				"critical": 6, // Higher priority queue for important emails
+				"default":  3, // Default priority for most emails
+				"low":      1, // Lower priority for non-urgent emails
 			},
 		},
 	)
 
 	return &JobService{
-		Client : client,
-		server : server,
+		Client: client,
+		server: server,
 		logger: logger,
 	}
 }
 
+func (j *JobService) SetAuthService(authService AuthServiceInterface) {
+	j.authService = authService
+}
 
-func (j *JobService) Start() error{
+func (j *JobService) Start() error {
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(TaskWelcome, j.handleWelcomeEmailTask)   			// when a task TaskWelcome is pulled from Redis, call handleWelcomeEmailTask
+	mux.HandleFunc(TaskWelcome, j.handleWelcomeEmailTask) // when a task TaskWelcome is pulled from Redis, call handleWelcomeEmailTask
+	mux.HandleFunc(TaskReminderEmail, j.handleReminderEmailTask)
+	mux.HandleFunc(TaskWeeklyReportEmail, j.handleWeeklyReportEmailTask)
 	j.logger.Info().Msg("Starting background job server")
-	if err := j.server.Start(mux); err != nil{
+	if err := j.server.Start(mux); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (j *JobService) Stop(){
+func (j *JobService) Stop() {
 	j.logger.Info().Msg("Stopping background job server")
 	j.server.Shutdown()
 	j.Client.Close()

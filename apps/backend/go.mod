@@ -4,12 +4,16 @@ go 1.25.7
 
 require (
 	github.com/go-playground/validator/v10 v10.30.2
+	github.com/google/uuid v1.6.0
+	github.com/hibiken/asynq v0.26.0
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/joho/godotenv v1.5.1
 	github.com/knadh/koanf/providers/env v1.1.0
 	github.com/knadh/koanf/v2 v2.3.2
 	github.com/newrelic/go-agent/v3 v3.42.0
+	github.com/pkg/errors v0.9.1
+	github.com/resend/resend-go/v2 v2.28.0
 	github.com/rs/zerolog v1.34.0
 )
 
@@ -44,8 +48,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
-	github.com/hibiken/asynq v0.26.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.3 // indirect
@@ -72,9 +74,7 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrpgx5 v1.3.3 // indirect
 	github.com/newrelic/go-agent/v3/integrations/nrpkgerrors v1.1.0 // indirect
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v9 v1.1.2 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/redis/go-redis/v9 v9.14.1 // indirect
-	github.com/resend/resend-go/v2 v2.28.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
