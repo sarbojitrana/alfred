@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "wait-on ../../packages/openapi/dist/index.js && env-cmd -f .env.local vite",
+    "dev": "wait-on ../../packages/openapi/dist/contracts/index.js && vite",
     "build": "vite build",
     "start": "serve -s dist",
     "test": "vite test",
@@ -14,9 +14,11 @@
     "format": "prettier . --check",
     "format:fix": "prettier --write .",
     "clean": "rimraf tsconfig.tsbuildinfo .turbo node_modules",
-    "typecheck": "tsc"
+    "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@alfred/openapi": "workspace:*",
+    "@alfred/zod": "workspace:*",
     "@clerk/clerk-react": "^5.38.1",
     "@clerk/themes": "^2.4.4",
     "@hookform/resolvers": "^5.2.1",
@@ -49,8 +51,6 @@
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-query": "^5.84.1",
     "@tanstack/react-query-devtools": "^5.84.1",
-    "@tasker/openapi": "workspace:*",
-    "@tasker/zod": "workspace:*",
     "@ts-rest/core": "^3.52.1",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
@@ -58,7 +58,6 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
-    "env-cmd": "^10.1.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.536.0",
     "next-themes": "^0.4.6",

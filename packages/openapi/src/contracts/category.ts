@@ -1,6 +1,11 @@
 import z from "zod";
 import { getSecurityMetadata } from "@/utils.js";
-import { schemaWithPagination, ZTodoCategory } from "@alfred/zod";
+import {
+    schemaWithPagination,
+    ZCreateCategoryPayload,
+    ZTodoCategory,
+    ZUpdateCategoryPayload,
+} from "@alfred/zod";
 import { initContract } from "@ts-rest/core";
 
 const c = initContract();
@@ -32,13 +37,7 @@ export const categoryContract = c.router(
             path: "/categories",
             method: "POST",
             description: "Create a new category",
-            body: ZTodoCategory.pick({
-                name: true,
-                color: true,
-                description: true,
-            }).partial({
-                description: true,
-            }),
+            body: ZCreateCategoryPayload,
             responses:{
                 201: ZTodoCategory,
             },
@@ -61,11 +60,7 @@ export const categoryContract = c.router(
             path: "/categories/:id",
             method: "PATCH",
             description: "Update category",
-            body : ZTodoCategory.pick({
-                name: true,
-                color: true,
-                description: true,
-            }).partial(),
+            body: ZUpdateCategoryPayload,
             responses:{
                 200: ZTodoCategory,
             },
@@ -84,6 +79,6 @@ export const categoryContract = c.router(
         }
     },
     {
-        pathPrefix: "/v1",
+        pathPrefix: "/api/v1",
     }
 )

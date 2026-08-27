@@ -44,13 +44,15 @@ import * as z from "zod";
 
 const createTodoSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title too long"),
-  description: z.string().optional(),
+  description: z.string().max(1000, "Description too long").optional(),
   priority: z.enum(["low", "medium", "high"]),
   categoryId: z.string().optional(),
   dueDate: z.date().optional(),
 });
 
 type CreateTodoForm = z.infer<typeof createTodoSchema>;
+
+const NO_CATEGORY = "none";
 
 interface TodoCreateFormProps {
   children: ReactNode;
@@ -103,7 +105,10 @@ export function TodoCreateForm({ children }: TodoCreateFormProps) {
           title: data.title,
           description: data.description || undefined,
           priority: data.priority,
-          categoryId: data.categoryId || undefined,
+          categoryId:
+            data.categoryId && data.categoryId !== NO_CATEGORY
+              ? data.categoryId
+              : undefined,
           dueDate: data.dueDate?.toISOString(),
         },
       });
@@ -223,7 +228,7 @@ export function TodoCreateForm({ children }: TodoCreateFormProps) {
                     <FormLabel>Category</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value || NO_CATEGORY}
                       disabled={createTodo.isPending}
                     >
                       <FormControl>
@@ -232,7 +237,7 @@ export function TodoCreateForm({ children }: TodoCreateFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="none">No Category</SelectItem>
+                        <SelectItem value={NO_CATEGORY}>No Category</SelectItem>
                         {categories?.data?.map((category) => (
                           <SelectItem key={category.id} value={category.id}>
                             <div className="flex items-center gap-2">

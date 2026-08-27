@@ -1,5 +1,5 @@
 import { env } from "@/config/env";
-import { apiContract } from "@tasker/openapi/contracts";
+import { apiContract } from "@alfred/openapi/contracts";
 import { useAuth } from "@clerk/clerk-react";
 import { initClient } from "@ts-rest/core";
 import axios, {
@@ -26,16 +26,25 @@ export const useApiClient = ({ isBlob = false }: { isBlob?: boolean } = {}) => {
     api: async ({ path, method, headers, body }) => {
       const token = await getToken();
 
+      // FormData must carry the multipart boundary axios generates for it,
+      // so never send a hand-written Content-Type alongside it.
+      const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+      const requestHeaders: Record<string, string | undefined> = {
+        ...headers,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+      if (isFormData) {
+        delete requestHeaders["Content-Type"];
+        delete requestHeaders["content-type"];
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const makeRequest = async (retryCount = 0): Promise<any> => {
         try {
           const result = await axios.request({
             method: method as Method,
-            url: `${env.VITE_API_URL}/api${path}`,
-            headers: {
-              ...headers,
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
+            url: `${env.VITE_API_URL}${path}`,
+            headers: requestHeaders,
             data: body,
             ...(isBlob ? { responseType: "blob" } : {}),
           });

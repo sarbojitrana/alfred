@@ -8,3 +8,8 @@ export const ZTodoComment = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
+
+// Mirrors the backend `comment.AddCommentPayload` / `UpdateCommentPayload` validators
+export const ZCommentPayload = z.object({
+  content: z.string().min(1).max(1000),
+});

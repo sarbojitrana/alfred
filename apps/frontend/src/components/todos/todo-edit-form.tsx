@@ -48,7 +48,7 @@ import * as z from "zod";
 
 const updateTodoSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title too long"),
-  description: z.string().optional(),
+  description: z.string().max(1000, "Description too long").optional(),
   status: z.enum(["draft", "active", "completed", "archived"]),
   priority: z.enum(["low", "medium", "high"]),
   categoryId: z.string().optional(),
@@ -56,6 +56,8 @@ const updateTodoSchema = z.object({
 });
 
 type UpdateTodoForm = z.infer<typeof updateTodoSchema>;
+
+const NO_CATEGORY = "none";
 
 interface TodoEditFormProps {
   todo: TGetTodosResponse["data"][number];
@@ -127,7 +129,10 @@ export function TodoEditForm({ todo, children }: TodoEditFormProps) {
           description: data.description || undefined,
           status: data.status,
           priority: data.priority,
-          categoryId: data.categoryId || undefined,
+          categoryId:
+            data.categoryId && data.categoryId !== NO_CATEGORY
+              ? data.categoryId
+              : undefined,
           dueDate: data.dueDate?.toISOString(),
         },
       });
@@ -294,7 +299,7 @@ export function TodoEditForm({ todo, children }: TodoEditFormProps) {
                   <FormLabel>Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value || NO_CATEGORY}
                     disabled={updateTodo.isPending}
                   >
                     <FormControl>
@@ -303,7 +308,7 @@ export function TodoEditForm({ todo, children }: TodoEditFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">No Category</SelectItem>
+                      <SelectItem value={NO_CATEGORY}>No Category</SelectItem>
                       {categories?.data?.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           <div className="flex items-center gap-2">

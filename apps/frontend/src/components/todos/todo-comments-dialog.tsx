@@ -101,8 +101,8 @@ export function TodoCommentsDialog({ todoId, children }: TodoCommentsDialogProps
   const onSubmit = async (data: CommentForm) => {
     try {
       await addComment.mutateAsync({
+        todoId,
         body: {
-          todoId,
           content: data.content,
         },
       });

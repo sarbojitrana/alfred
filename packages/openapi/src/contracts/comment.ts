@@ -1,5 +1,5 @@
 import { getSecurityMetadata } from "@/utils.js";
-import {ZTodoComment} from "@alfred/zod";
+import { ZCommentPayload, ZTodoComment } from "@alfred/zod";
 import { initContract } from "@ts-rest/core";
 import z from "zod";
 
@@ -12,11 +12,9 @@ export const commentContract = c.router(
     {
         addComment:{
             summary: "Add comment to todo",
-            path: "/todo/:id/comments",
+            path: "/todos/:id/comments",
             method: "POST",
-            body: ZTodoComment.pick({
-                content: true,
-            }),
+            body: ZCommentPayload,
             responses:{
                 201: ZTodoComment,
             },
@@ -25,7 +23,7 @@ export const commentContract = c.router(
 
         getCommentsByTodoId :{
             summary: "Get comments for todo",
-            path: "/todo/:id/comments",
+            path: "/todos/:id/comments",
             method: "GET",
             responses: {
                 200: z.array(ZTodoComment),
@@ -37,9 +35,7 @@ export const commentContract = c.router(
             summary: "Update comment",
             path: "/comments/:id",
             method: "PATCH",
-            body: ZTodoComment.pick({
-                content: true,
-            }),
+            body: ZCommentPayload,
             responses:{
                 200: ZTodoComment,
             },
@@ -56,7 +52,7 @@ export const commentContract = c.router(
             metadata: metadata,
         },
     },{
-        pathPrefix: "/v1"
+        pathPrefix: "/api/v1"
     }
 
 )

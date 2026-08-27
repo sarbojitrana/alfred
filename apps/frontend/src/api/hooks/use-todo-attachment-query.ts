@@ -2,7 +2,7 @@ import { type TApiClient, useApiClient } from "@/api";
 import { QUERY_KEYS } from "@/api/query-utils";
 import type { TRequests } from "@/api/types";
 import { showApiErrorToast } from "@/api/utils";
-import type { apiContract } from "@tasker/openapi/contracts";
+import type { apiContract } from "@alfred/openapi/contracts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ServerInferResponseBody } from "@ts-rest/core";
 
@@ -45,10 +45,9 @@ const uploadTodoAttachment = async ({
 
   const res = await api.Todo.uploadTodoAttachment({
     params: { id: todoId },
-    body: formData,
-    extraHeaders: {
-      "Content-Type": "multipart/form-data",
-    },
+    // the contract models this as a binary file field; axios sends the FormData
+    // and generates the multipart boundary itself
+    body: formData as unknown as TUploadTodoAttachmentBody,
   });
 
   if (res.status === 201) {

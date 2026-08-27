@@ -90,7 +90,7 @@
         }
       }
     },
-    "/v1/todos": {
+    "/api/v1/todos": {
       "get": {
         "description": "Get all todos",
         "summary": "Get all todos",
@@ -291,16 +291,20 @@
                                 "type": "array",
                                 "items": {
                                   "type": "string"
-                                }
+                                },
+                                "nullable": true
                               },
                               "reminder": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "color": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "difficulty": {
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true
                               }
                             },
                             "nullable": true
@@ -331,7 +335,8 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "createdAt": {
                                 "type": "string"
@@ -412,16 +417,20 @@
                                       "type": "array",
                                       "items": {
                                         "type": "string"
-                                      }
+                                      },
+                                      "nullable": true
                                     },
                                     "reminder": {
-                                      "type": "string"
+                                      "type": "string",
+                                      "nullable": true
                                     },
                                     "color": {
-                                      "type": "string"
+                                      "type": "string",
+                                      "nullable": true
                                     },
                                     "difficulty": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true
                                     }
                                   },
                                   "nullable": true
@@ -610,10 +619,13 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
                   },
                   "description": {
                     "type": "string",
+                    "maxLength": 1000,
                     "nullable": true
                   },
                   "priority": {
@@ -626,6 +638,7 @@
                   },
                   "dueDate": {
                     "type": "string",
+                    "format": "date-time",
                     "nullable": true
                   },
                   "parentTodoId": {
@@ -645,16 +658,20 @@
                         "type": "array",
                         "items": {
                           "type": "string"
-                        }
+                        },
+                        "nullable": true
                       },
                       "reminder": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                       },
                       "color": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                       },
                       "difficulty": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                       }
                     },
                     "nullable": true
@@ -731,16 +748,20 @@
                           "type": "array",
                           "items": {
                             "type": "string"
-                          }
+                          },
+                          "nullable": true
                         },
                         "reminder": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "color": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "difficulty": {
-                          "type": "number"
+                          "type": "number",
+                          "nullable": true
                         }
                       },
                       "nullable": true
@@ -783,7 +804,7 @@
         ]
       }
     },
-    "/v1/todos/{id}": {
+    "/api/v1/todos/{id}": {
       "get": {
         "description": "Get todo by ID",
         "summary": "Get todo by ID",
@@ -865,16 +886,20 @@
                           "type": "array",
                           "items": {
                             "type": "string"
-                          }
+                          },
+                          "nullable": true
                         },
                         "reminder": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "color": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "difficulty": {
-                          "type": "number"
+                          "type": "number",
+                          "nullable": true
                         }
                       },
                       "nullable": true
@@ -905,7 +930,8 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "createdAt": {
                           "type": "string"
@@ -986,16 +1012,20 @@
                                 "type": "array",
                                 "items": {
                                   "type": "string"
-                                }
+                                },
+                                "nullable": true
                               },
                               "reminder": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "color": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "difficulty": {
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true
                               }
                             },
                             "nullable": true
@@ -1171,20 +1201,14 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
                   },
                   "description": {
                     "type": "string",
+                    "maxLength": 1000,
                     "nullable": true
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "draft",
-                      "active",
-                      "completed",
-                      "archived"
-                    ]
                   },
                   "priority": {
                     "type": "string",
@@ -1196,6 +1220,7 @@
                   },
                   "dueDate": {
                     "type": "string",
+                    "format": "date-time",
                     "nullable": true
                   },
                   "parentTodoId": {
@@ -1215,19 +1240,32 @@
                         "type": "array",
                         "items": {
                           "type": "string"
-                        }
+                        },
+                        "nullable": true
                       },
                       "reminder": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                       },
                       "color": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                       },
                       "difficulty": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                       }
                     },
                     "nullable": true
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "active",
+                      "completed",
+                      "archived"
+                    ]
                   }
                 }
               }
@@ -1298,16 +1336,20 @@
                           "type": "array",
                           "items": {
                             "type": "string"
-                          }
+                          },
+                          "nullable": true
                         },
                         "reminder": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "color": {
-                          "type": "string"
+                          "type": "string",
+                          "nullable": true
                         },
                         "difficulty": {
-                          "type": "number"
+                          "type": "number",
+                          "nullable": true
                         }
                       },
                       "nullable": true
@@ -1383,7 +1425,7 @@
         ]
       }
     },
-    "/v1/todos/stats": {
+    "/api/v1/todos/stats": {
       "get": {
         "description": "Get todo statistics",
         "summary": "Get todo statistics",
@@ -1439,7 +1481,7 @@
         ]
       }
     },
-    "/v1/todos/{id}/attachments": {
+    "/api/v1/todos/{id}/attachments": {
       "post": {
         "description": "Upload a file attachment to a todo",
         "summary": "Upload attachment to todo",
@@ -1539,7 +1581,7 @@
         ]
       }
     },
-    "/v1/todos/{id}/attachments/{attachmentId}": {
+    "/api/v1/todos/{id}/attachments/{attachmentId}": {
       "delete": {
         "description": "Delete a file attachment from a todo",
         "summary": "Delete todo attachment",
@@ -1582,7 +1624,7 @@
         ]
       }
     },
-    "/v1/todos/{id}/attachments/{attachmentId}/download": {
+    "/api/v1/todos/{id}/attachments/{attachmentId}/download": {
       "get": {
         "description": "Get a presigned URL to download an attachment",
         "summary": "Get attachment download URL",
@@ -1636,7 +1678,7 @@
         ]
       }
     },
-    "/v1/todo/{id}/comments": {
+    "/api/v1/todos/{id}/comments": {
       "post": {
         "summary": "Add comment to todo",
         "tags": [
@@ -1661,7 +1703,9 @@
                 "type": "object",
                 "properties": {
                   "content": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
                   }
                 },
                 "required": [
@@ -1787,7 +1831,7 @@
         ]
       }
     },
-    "/v1/comments/{id}": {
+    "/api/v1/comments/{id}": {
       "patch": {
         "summary": "Update comment",
         "tags": [
@@ -1812,7 +1856,9 @@
                 "type": "object",
                 "properties": {
                   "content": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
                   }
                 },
                 "required": [
@@ -1903,7 +1949,7 @@
         ]
       }
     },
-    "/v1/categories": {
+    "/api/v1/categories": {
       "get": {
         "description": "Get all caegories",
         "summary": "Get all categories",
@@ -1988,7 +2034,8 @@
                             "type": "string"
                           },
                           "description": {
-                            "type": "string"
+                            "type": "string",
+                            "nullable": true
                           },
                           "createdAt": {
                             "type": "string"
@@ -2055,13 +2102,18 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
                   },
                   "color": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
                   },
                   "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "nullable": true
                   }
                 },
                 "required": [
@@ -2094,7 +2146,8 @@
                       "type": "string"
                     },
                     "description": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "createdAt": {
                       "type": "string"
@@ -2124,7 +2177,7 @@
         ]
       }
     },
-    "/v1/categories/{id}": {
+    "/api/v1/categories/{id}": {
       "get": {
         "description": "Get category by ID",
         "summary": "Get category by ID",
@@ -2164,7 +2217,8 @@
                       "type": "string"
                     },
                     "description": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "createdAt": {
                       "type": "string"
@@ -2218,13 +2272,18 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
                   },
                   "color": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
                   },
                   "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "nullable": true
                   }
                 }
               }
@@ -2253,7 +2312,8 @@
                       "type": "string"
                     },
                     "description": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "createdAt": {
                       "type": "string"
@@ -2324,7 +2384,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080/api",
+      "url": "http://localhost:8080",
       "description": "Local Server"
     }
   ],

@@ -8,6 +8,12 @@ import { formatFileSize } from "@/lib/utils";
 import { Download, FileText, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+// the backend stores the sniffed content type, e.g. "text/plain; charset=utf-8"
+const formatMimeType = (mimeType: string) => {
+  const subtype = mimeType.split(";")[0].split("/")[1];
+  return (subtype || mimeType).toUpperCase();
+};
+
 interface TodoAttachmentsProps {
   todoId: string;
   attachments: TGetTodoByIdResponse["attachments"];
@@ -83,7 +89,7 @@ export function TodoAttachments({
                     ? formatFileSize(attachment.fileSize)
                     : "Unknown size"}
                   {attachment.mimeType &&
-                    ` • ${attachment.mimeType.split("/")[1].toUpperCase()}`}
+                    ` • ${formatMimeType(attachment.mimeType)}`}
                 </p>
               </div>
             </div>

@@ -10,9 +10,13 @@
     "clean": "rimraf dist tsconfig.tsbuildinfo .turbo node_modules"
   },
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./contracts": {
       "types": "./dist/contracts/index.d.ts",
-      "default": "./dist/contract/index.js"
+      "default": "./dist/contracts/index.js"
     }
   },
   "keywords": [],
@@ -34,5 +38,6 @@
     "typescript": "^5.8.2",
     "wait-on": "^8.0.3"
   },
-  "main": "index.js"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

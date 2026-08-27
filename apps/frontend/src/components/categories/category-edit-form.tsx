@@ -29,8 +29,14 @@ import * as z from "zod";
 
 const updateCategorySchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name too long"),
-  description: z.string().max(500, "Description too long").optional(),
-  color: z.string().min(1, "Color is required"),
+  description: z.string().max(255, "Description too long").optional(),
+  color: z
+    .string()
+    .min(1, "Color is required")
+    .regex(
+      /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/,
+      "Color must be a hex value, e.g. #3b82f6",
+    ),
 });
 
 type UpdateCategoryForm = z.infer<typeof updateCategorySchema>;

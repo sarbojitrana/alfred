@@ -3,10 +3,12 @@ import { getSecurityMetadata } from "@/utils.js"
 import { initContract } from "@ts-rest/core"
 import {
     schemaWithPagination,
+    ZCreateTodoPayload,
     ZPopulatedTodo,
     ZTodo,
     ZTodoAttachment,
     ZTodoStats,
+    ZUpdateTodoPayload,
 } from "@alfred/zod"
 
 const metadata = getSecurityMetadata()
@@ -54,19 +56,7 @@ export const todoContract = c.router(
       path: "/todos",
       method: "POST",
       description: "Create a new todo",
-      body: ZTodo.pick({
-        title: true,
-        description: true,
-        priority: true,
-        dueDate: true,
-        parentTodoId: true,
-        categoryId: true,
-        metadata: true,
-      })
-        .partial()
-        .required({
-          title: true,
-        }),
+      body: ZCreateTodoPayload,
       responses: {
         201: ZTodo,
       },
@@ -89,16 +79,7 @@ export const todoContract = c.router(
       path: "/todos/:id",
       method: "PATCH",
       description: "Update todo",
-      body: ZTodo.pick({
-        title: true,
-        description: true,
-        status: true,
-        priority: true,
-        dueDate: true,
-        parentTodoId: true,
-        categoryId: true,
-        metadata: true,
-      }).partial(),
+      body: ZUpdateTodoPayload,
       responses: {
         200: ZTodo,
       },
@@ -169,6 +150,6 @@ export const todoContract = c.router(
     },
   },
   {
-    pathPrefix: "/v1",
+    pathPrefix: "/api/v1",
   }
 );

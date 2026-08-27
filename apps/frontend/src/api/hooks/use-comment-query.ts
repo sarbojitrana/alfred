@@ -2,7 +2,7 @@ import { type TApiClient, useApiClient } from "@/api";
 import { QUERY_KEYS } from "@/api/query-utils";
 import type { TRequests } from "@/api/types";
 import { showApiErrorToast } from "@/api/utils";
-import type { apiContract } from "@tasker/openapi/contracts";
+import type { apiContract } from "@alfred/openapi/contracts";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ServerInferResponseBody } from "@ts-rest/core";
 
@@ -118,15 +118,15 @@ export const useAddComment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ body }: { body: TAddCommentPayload & { todoId: string } }) =>
-      addComment({ api, todoId: body.todoId, data: body }),
-    onSuccess: (_, { body }) => {
+    mutationFn: ({ todoId, body }: { todoId: string; body: TAddCommentPayload }) =>
+      addComment({ api, todoId, data: body }),
+    onSuccess: (_, { todoId }) => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.COMMENTS.GET_COMMENTS_BY_TODO_ID, body.todoId],
+        queryKey: [QUERY_KEYS.COMMENTS.GET_COMMENTS_BY_TODO_ID, todoId],
       });
       // Also invalidate the todo to update comment count
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.TODOS.GET_TODO_BY_ID, body.todoId],
+        queryKey: [QUERY_KEYS.TODOS.GET_TODO_BY_ID, todoId],
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.TODOS.ALL_TODOS],
